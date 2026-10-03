@@ -1,0 +1,54 @@
+# Reverse proxy in front of RecEmu.Server.
+#
+# Rec Room talks to several subdomains of one parent domain rather than one host, because the API is
+# split by service (accounts, auth, api, cdn, and so on). The server's service-discovery endpoint
+# advertises those names, and the client calls them literally, so they all have to resolve to the same
+# place and terminate on the same certificate. A wildcard certificate is therefore the minimum
+# workable setup; a certificate for one hostname is not enough.
+
+{
+	email admin@rec.local
+}
+
+(recemu_common) {
+	encode zstd gzip
+
+	# The client is a game client that talks to an unfamiliar server, so it will sometimes send
+	# requests that a proxy is happy to answer but the server is not. Log the status codes rather
+	# than dropping them silently; a private server that quietly 404s looks broken in a way that is
+	# hard to debug from the game log alone.
+	log {
+		output file /data/access.log
+		format json
+	}
+
+	# Rec Room authenticates with bearer tokens and sends no cookies, so there is no CSRF surface
+	# here. CORS is still needed because the client's UnityWebRequest instances originate from a
+	# file:// URL and can present an origin the proxy would otherwise reject.
+	header {
+		Access-Control-Allow-Origin "*"
+		Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+		Access-Control-Allow-Headers "Authorization, Content-Type, X-Requested-With, Photon-Realm"
+		Access-Control-Max-Age "86400"
+		-Server
+	}
+
+	# The upload endpoints take avatar images and room bundles in the tens of megabytes.
+	request_body {
+		max_size 100MB
+	}
+}
+
+rec.local, *.rec.local {
+	import recemu_common
+
+	# SignalR needs the WebSocket upgrade forwarded and long-lived connections left alone. Without
+	# the flush interval, Caddy buffers responses and notifications arrive in bursts instead of when
+	# they are sent, which breaks the client's presence and room update handling in a way that looks
+	# like intermittent desync rather than a proxy problem.
+	reverse_proxy recemu:8080 {
+		flush_interval -1
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Real-IP {remote_host}
+	}
+}

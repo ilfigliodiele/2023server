@@ -1,0 +1,74 @@
+# Photon C++ load balancer configuration TEMPLATE.
+#
+# This is documentation, not a working config. The Photon server binaries come from the Photon
+# documentation portal under your own license, and the values that matter (app ids, certificates,
+# ports, the initial operator account) are deployment-specific. Anything here that looks concrete is
+# a placeholder; anything left blank is deliberately blank rather than guessed, because a wrong guess
+# in a Photon config produces a server that starts and then rejects every client.
+#
+# The app ids below are RecEmu's defaults. If you changed them in appsettings.json, change them here
+# too — the client is told one set by the mod and the load balancer must accept exactly that set.
+
+# ---------------------------------------------------------------------------
+# Identity
+# ---------------------------------------------------------------------------
+# The name the load balancer identifies itself as. The client's region string has to match one of the
+# regions configured under LoadBalancing, or the client will not find the master server.
+LoadBalancerName=realtime
+
+# Port the client connects to. 443 is what the mod defaults to; 5000 matches the
+# RecEmuRedirect.cfg default. Pick one and keep Caddy, this file, and the mod in agreement.
+Port=5000
+PortTLS=5443
+
+# ---------------------------------------------------------------------------
+# Certificates
+# ---------------------------------------------------------------------------
+# Paths to the certificate the load balancer presents. A self-signed certificate works for a
+# single-machine setup provided the certificate is also trusted on the machine running the game;
+# installing it is more reliable than the mod's SkipCertificateValidation switch, which does not
+# affect Photon's native TLS stack.
+Certificate=
+CertificatePrivateKey=
+
+# ---------------------------------------------------------------------------
+# Application ids
+# ---------------------------------------------------------------------------
+# Realtime (positioning, state sync, room ownership).
+ApplicationIdRealtime=ce298166-7e52-4c47-a1c2-0ce4b7a7cfcb
+
+# Voice.
+ApplicationIdVoice=5fa7359e-b671-4910-8226-cb539cdae485
+
+# ---------------------------------------------------------------------------
+# Load balancing
+# ---------------------------------------------------------------------------
+# Regions the client may connect to. The mod sets the client's fixed region to "localhost", so the
+# region named here must literally be "localhost" or the client cannot find the master server.
+[LoadBalancing]
+    IsDefault=localhost
+
+[LoadBalancing/localhost]
+    Type=MASTER
+    Address=127.0.0.1
+    Port=5000
+    ClientPort=5000
+    PingBeforeJoin=true
+    ClientPingInterval=1000
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+# Photon's own log, separate from RecEmu's. When a client reports "photon connect failed" and the
+# RecEmu log shows a successful room instance, this file is where the answer is.
+LogFile=./log/photon.log
+LogLevel=INFO
+
+# ---------------------------------------------------------------------------
+# Master server internals
+# ---------------------------------------------------------------------------
+# Peer and client timeouts, in seconds. The defaults Photon ships are tuned for its own cloud; a
+# load balancer on a laptop that suspends mid-session needs shorter timeouts or stale clients
+# linger until something times out for them.
+PeerTimeout=10
+ClientTimeout=10

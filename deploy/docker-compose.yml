@@ -1,0 +1,64 @@
+# RecEmu deployment assets.
+#
+# TLS termination and name resolution for a single-machine deployment. Photon itself is deliberately
+# absent: the Photon C++ server is a licensed binary from the Photon docs portal with a configuration
+# specific to your own app ids and certificate, and there is no honest way to ship a working example
+# of it. See docs/deployment.md for what to fill in.
+
+services:
+  recemu:
+    image: mcr.microsoft.com/dotnet/aspnet:10.0
+    container_name: recemu
+    restart: unless-stopped
+    ports:
+      # Plain HTTP for local testing only. The client expects https, so put the Caddy proxy below in
+      # front of this before pointing a real client at it.
+      - "127.0.0.1:8080:8080"
+    volumes:
+      # SQLite, the signing key and the blob store. Matches the server's var/ directory, which is not
+      # called data/ because the server has a Data source folder and Windows would treat the two as
+      # the same directory.
+      - ./var:/app/var
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      # SQLite is a single file with a single writer. Multiple replicas would each open their own
+      # copy of it and diverge, so the container count stays at one. Scaling past this means moving
+      # to a server database, not adding containers.
+      DOTNET_EnableDiagnostics: "0"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: recemu-caddy
+    restart: unless-stopped
+    depends_on:
+      recemu:
+        condition: service_healthy
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-data:/data
+      - ./caddy-config:/config
+    cap_add:
+      # Binding :443 as a non-root container process needs this.
+      - NET_BIND_SERVICE
+
+  # Wildcard certificate issuance. Left as a profile rather than a default service because a
+  # wildcard for a real domain needs the DNS challenge credentials, and running this on a machine
+  # with no public domain just adds a failing container to the list.
+  certbot:
+    image: certbot/certbot:latest
+    container_name: recemu-certbot
+    profiles: ["tls"]
+    volumes:
+      - ./caddy-data:/data
+      - ./caddy-config:/config
+      - ./certbot-webroot:/var/www/certbot

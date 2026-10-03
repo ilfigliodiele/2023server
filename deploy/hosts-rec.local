@@ -1,0 +1,58 @@
+# Rec Room private-server hostnames.
+#
+# Rec Room does not talk to one host. Its service-discovery document advertises a family of
+# subdomains (accounts, auth, api, cdn, ...) and the client then calls them literally. So this list
+# is inherently open-ended, and a missing entry shows up as one broken feature rather than a startup
+# error.
+#
+# The list below mirrors ServiceCatalog.Labels in the server exactly: every advertised label gets an
+# entry. Add to both together, not one alone.
+#
+# 127.0.0.1 is the default because this is a single-machine deployment. Use the machine's LAN
+# address instead if the game runs elsewhere, or the reverse proxy's address if it runs in a
+# container.
+#
+# Requires administrator rights to edit, and is required at all: without it the client resolves
+# rec.local through public DNS, gets NXDOMAIN, and fails before any of the mod's patches matter.
+
+# Apex and discovery hosts.
+127.0.0.1	rec.local
+127.0.0.1	ns.rec.local
+
+# Advertised service hosts, matching ServiceCatalog.Labels.
+127.0.0.1	accounts.rec.local
+127.0.0.1	ai.rec.local
+127.0.0.1	api.rec.local
+127.0.0.1	auth.rec.local
+127.0.0.1	bugreporting.rec.local
+127.0.0.1	cards.rec.local
+127.0.0.1	cdn.rec.local
+127.0.0.1	chat.rec.local
+127.0.0.1	clubs.rec.local
+127.0.0.1	cms.rec.local
+127.0.0.1	commerce.rec.local
+127.0.0.1	data.rec.local
+127.0.0.1	datacollection.rec.local
+127.0.0.1	discovery.rec.local
+127.0.0.1	econ.rec.local
+127.0.0.1	gamelogs.rec.local
+127.0.0.1	geo.rec.local
+127.0.0.1	img.rec.local
+127.0.0.1	leaderboard.rec.local
+127.0.0.1	link.rec.local
+127.0.0.1	lists.rec.local
+127.0.0.1	match.rec.local
+127.0.0.1	moderation.rec.local
+127.0.0.1	notify.rec.local
+127.0.0.1	platformnotifications.rec.local
+127.0.0.1	playersettings.rec.local
+127.0.0.1	roomcomments.rec.local
+127.0.0.1	roomieintegrations.rec.local
+127.0.0.1	rooms.rec.local
+127.0.0.1	storage.rec.local
+127.0.0.1	strings.rec.local
+127.0.0.1	strings-cdn.rec.local
+127.0.0.1	studio.rec.local
+127.0.0.1	thorn.rec.local
+127.0.0.1	videos.rec.local
+127.0.0.1	www.rec.local
