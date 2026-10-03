@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\ponto\\Documents\\Default Project\\RecEmu\\client\\RecEmu.ClientMod\\RecEmu.ClientMod.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\ponto\\Documents\\Default Project\\RecEmu\\client\\RecEmu.ClientMod\\RecEmu.ClientMod.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\ponto\\Documents\\Default Project\\RecEmu\\client\\RecEmu.ClientMod\\RecEmu.ClientMod.csproj",
+        "projectName": "RecEmu.ClientMod",
+        "projectPath": "C:\\Users\\ponto\\Documents\\Default Project\\RecEmu\\client\\RecEmu.ClientMod\\RecEmu.ClientMod.csproj",
+        "packagesPath": "C:\\Users\\ponto\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ponto\\Documents\\Default Project\\RecEmu\\client\\RecEmu.ClientMod\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\ponto\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "framework": "net48",
+            "targetAlias": "net48",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.400"
+      },
+      "frameworks": {
+        "net48": {
+          "framework": "net48",
+          "targetAlias": "net48",
+          "dependencies": {
+            "MelonLoader": {
+              "include": "Compile, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[0.6.21, )"
+            },
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.3, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
