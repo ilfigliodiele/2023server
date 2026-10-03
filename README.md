@@ -94,3 +94,5 @@ See [docs/deployment.md](docs/deployment.md) for the container and reverse-proxy
 [docs/contract-notes.md](docs/contract-notes.md) records the client-visible behaviours that are easy
 to get wrong: response casing, scalar-versus-object bodies, the full-details-after-mutation rule, and
 the request-parsing variants.
+
+#⚠️The Thing Can Change So Join The ds For Support https://discord.gg/GqhNxa6tEs
